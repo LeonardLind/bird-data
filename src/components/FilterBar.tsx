@@ -16,9 +16,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
   chartFilters,
   setChartFilters,
 }) => {
-  const handleChartFilterChange = (key: keyof typeof chartFilters) => {
-    setChartFilters({ ...chartFilters, [key]: !chartFilters[key] });
-  };
 
   return (
     <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 flex flex-col md:flex-row items-center gap-4 justify-between">
@@ -33,23 +30,31 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
       {/* Chart Filters */}
       <div className="flex gap-6">
-        {(["birdNet", "customModel", "perch"] as const).map((key) => (
-          <label key={key} className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={chartFilters[key]}
-              onChange={() => handleChartFilterChange(key)}
-              className="w-4 h-4 accent-indigo-500"
-            />
-            <span>
-              {key === "birdNet"
-                ? "BirdNET"
-                : key === "customModel"
-                ? "Custom Model"
-                : "Perch"}
-            </span>
-          </label>
-        ))}
+        {["birdNet", "customModel", "perch"].map((model) => (
+  <label
+    key={model}
+    className="flex items-center gap-1 cursor-pointer"
+    style={{ color: model === "birdNet" ? "#60a5fa" 
+                  : model === "customModel" ? "#f59e0b" 
+                  : "#10b981" }} // <- only change here
+  >
+    <input
+      type="checkbox"
+      checked={chartFilters[model as keyof typeof chartFilters]}
+      onChange={(e) =>
+        setChartFilters({
+          ...chartFilters,
+          [model]: e.target.checked,
+        })
+      }
+    />
+    {model === "birdNet"
+      ? "BirdNet"
+      : model === "customModel"
+      ? "Custom Model"
+      : "Perch"}
+  </label>
+))}
       </div>
     </div>
   );
