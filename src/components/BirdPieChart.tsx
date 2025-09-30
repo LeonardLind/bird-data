@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 import { ResponsivePie, type PieTooltipProps } from "@nivo/pie";
 import type { BirdRecord } from "../utils/parseExcel";
 import TopSpeciesList from "./TopSpeciesList";
+import { getFilteredData, getTopSpecies } from "../utils/chartUtils";
 
 interface StatusChartItem {
   id: string;
@@ -36,7 +37,6 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({ data, chartFilters, groupBy
   const chartData = useMemo(() => {
     if (groupByStatus) {
       const items = data as StatusChartItem[];
-      // Assign colors based on status and sort descending by count
       return items
         .map((item) => ({
           ...item,
@@ -45,24 +45,8 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({ data, chartFilters, groupBy
         .sort((a, b) => b.value - a.value);
     }
 
-    const birdData = data as BirdRecord[];
-    return birdData
-      .map((b) => ({
-        ...b,
-        total:
-          (chartFilters.birdNet ? b.birdNet : 0) +
-          (chartFilters.customModel ? b.customModel : 0) +
-          (chartFilters.perch ? b.perch : 0),
-      }))
-      .filter((b) => b.total > 0)
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10)
-      .map((b) => ({
-        id: b.species,
-        label: b.species,
-        value: b.total,
-        color: "#60a5fa",
-      }));
+    const birdData = getFilteredData(data as BirdRecord[], "", chartFilters);
+    return getTopSpecies(birdData);
   }, [data, chartFilters, groupByStatus]);
 
   return (

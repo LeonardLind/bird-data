@@ -9,7 +9,6 @@ export interface BirdRecord {
   perch: number;
   max: number;
   status: string; // LC, NT, VU, EN, CR, etc.
-  
 }
 
 /**
@@ -38,11 +37,8 @@ export const parseExcel = async (file: File): Promise<BirdRecord[]> => {
         });
 
         const formattedData: BirdRecord[] = jsonData.map((row) => {
-          // Extract status from L1 and L3 columns (column C in each table)
-          const statusL1 = row[headerMap["L1 status"]] || "";
-          const statusL3 = row[headerMap["L3 status"]] || "";
-
-          // Prefer L1 if present, otherwise L3, otherwise Unknown
+          const statusL1 = row[headerMap["l1 status"]] || "";
+          const statusL3 = row[headerMap["l3 status"]] || "";
           const status = statusL1.trim() || statusL3.trim() || "Unknown";
 
           return {
@@ -50,7 +46,7 @@ export const parseExcel = async (file: File): Promise<BirdRecord[]> => {
             species: row[headerMap["species"]] || "Unknown",
             birdNet: Number(row[headerMap["birdnet"]]) || 0,
             customModel: Number(row[headerMap["custom model"]]) || 0,
-            perch: Number(row[headerMap["perch "]]) || 0,
+            perch: Number(row[headerMap["perch"]]) || 0,
             max: Number(row[headerMap["max"]]) || 0,
             status,
           };

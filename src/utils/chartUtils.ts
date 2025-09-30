@@ -7,8 +7,14 @@ interface ChartFilters {
   perch: boolean;
 }
 
+const modelColors: Record<string, string> = {
+  birdNet: "#60a5fa",      // blue
+  customModel: "#f59e0b",  // amber
+  perch: "#10b981",        // green
+};
+
 /**
- * Filter and process bird data for charts.
+ * Filter bird data based on search and chart filters, and keep only the highest model.
  */
 export const getFilteredData = (
   data: BirdRecord[],
@@ -19,18 +25,29 @@ export const getFilteredData = (
     .filter((b) =>
       searchTerm ? b.species.toLowerCase().includes(searchTerm.toLowerCase()) : true
     )
-    .map((b) => ({
-      ...b,
-      total:
-        (chartFilters.birdNet ? b.birdNet : 0) +
-        (chartFilters.customModel ? b.customModel : 0) +
-        (chartFilters.perch ? b.perch : 0),
-    }))
+    .map((b) => {
+      const modelValues = {
+        birdNet: chartFilters.birdNet ? b.birdNet : 0,
+        customModel: chartFilters.customModel ? b.customModel : 0,
+        perch: chartFilters.perch ? b.perch : 0,
+      };
+
+      const [model, value] = Object.entries(modelValues).reduce(
+        (acc, curr) => (curr[1] > acc[1] ? curr : acc),
+        ["none", 0]
+      );
+
+      return {
+        ...b,
+        total: value,
+        color: modelColors[model] || "#6b7280",
+      };
+    })
     .filter((b) => b.total > 0);
 };
 
 /**
- * Get the top N species by total count.
+ * Get top N species by total count.
  */
 export const getTopSpecies = (data: BirdRecord[], top = 10) =>
   data
@@ -40,5 +57,5 @@ export const getTopSpecies = (data: BirdRecord[], top = 10) =>
       id: b.species,
       label: b.species,
       value: b.total,
-      color: "#60a5fa", // Consistent blue
+      color: (b as any).color || "#60a5fa",
     }));
