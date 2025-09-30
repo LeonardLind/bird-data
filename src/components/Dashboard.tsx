@@ -18,8 +18,8 @@ const Dashboard: React.FC = () => {
     perch: true,
   });
   const [groupByStatus, setGroupByStatus] = useState(false);
+  const [statusSheet, setStatusSheet] = useState<"L1" | "L3" | "combined">("combined");
 
-  // Handle file upload
   const handleFileUpload = async (file: File) => {
     try {
       const speciesData = await parseExcel(file);
@@ -32,39 +32,35 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Apply search filter
   const filteredData = useMemo(() => {
     return data.filter((bird) =>
-      searchTerm
-        ? bird.species.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
+      searchTerm ? bird.species.toLowerCase().includes(searchTerm.toLowerCase()) : true
     );
   }, [data, searchTerm]);
 
-  // Prepare data for pie chart
   const dataForChart = useMemo(() => {
     if (!groupByStatus || statusRecords.length === 0) {
-      // Top 10 species chart
       return filteredData;
     }
 
-    // Group totals by status
-    const statusTotals: Record<string, number> = {};
+    let filteredStatus: StatusRecord[];
+    if (statusSheet === "L1") filteredStatus = statusRecords.filter((r) => r.sheet === "L1");
+    else if (statusSheet === "L3") filteredStatus = statusRecords.filter((r) => r.sheet === "L3");
+    else filteredStatus = statusRecords;
 
-    statusRecords.forEach(({ status }) => {
+    const statusTotals: Record<string, number> = {};
+    filteredStatus.forEach(({ status }) => {
       statusTotals[status] = (statusTotals[status] || 0) + 1;
     });
 
-    // Convert to array for the pie chart
     return Object.entries(statusTotals).map(([status, value]) => ({
       id: status,
       label: status,
       value,
-      color: "#60a5fa", // we can adjust colors by status if needed
+      color: "#60a5fa",
     }));
-  }, [filteredData, statusRecords, groupByStatus]);
+  }, [filteredData, statusRecords, groupByStatus, statusSheet]);
 
-  // KPI Calculations
   const totalSpecies = data.length;
   const detectedSpecies = data.filter((bird) => bird.max > 0).length;
 
@@ -72,20 +68,17 @@ const Dashboard: React.FC = () => {
     <div className="p-6 bg-gray-900 min-h-screen text-gray-100">
       <h1 className="text-3xl font-bold mb-6">Bird Data Dashboard</h1>
 
-      {/* File Upload */}
       <FileUploader onFileSelected={handleFileUpload} />
 
       {data.length === 0 ? (
         <p className="text-gray-400 mt-4">Please upload a file to see insights.</p>
       ) : (
         <>
-          {/* KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
             <KPICard title="Total Species" value={totalSpecies} />
             <KPICard title="Detected Species" value={detectedSpecies} />
           </div>
 
-          {/* Filter Bar */}
           <FilterBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -93,8 +86,7 @@ const Dashboard: React.FC = () => {
             setChartFilters={setChartFilters}
           />
 
-          {/* Group by Status Checkbox */}
-          <div className="flex items-center gap-2 mt-4 mb-4">
+          <div className="flex items-center gap-2 mt-4 mb-2">
             <input
               type="checkbox"
               checked={groupByStatus}
@@ -105,14 +97,30 @@ const Dashboard: React.FC = () => {
             <label htmlFor="groupByStatus">Group by Conservation Status</label>
           </div>
 
-          {/* Chart */}
+          {groupByStatus && (
+            <div className="flex items-center gap-4 mt-2 mb-4">
+              {["L1", "L3", "combined"].map((sheet) => (
+                <label key={sheet} className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="statusSheet"
+                    value={sheet}
+                    checked={statusSheet === sheet}
+                    onChange={() => setStatusSheet(sheet as "L1" | "L3" | "combined")}
+                    className="accent-blue-400"
+                  />
+                  {sheet.toUpperCase()}
+                </label>
+              ))}
+            </div>
+          )}
+
           <BirdPieChart
             data={dataForChart}
             chartFilters={chartFilters}
             groupByStatus={groupByStatus}
           />
 
-          {/* Result Count */}
           <p className="text-gray-400 mt-4">
             Showing {filteredData.length} of {totalSpecies} species
           </p>

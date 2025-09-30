@@ -28,10 +28,14 @@ const statusColors: Record<string, string> = {
   DD: "#6b7280",
   EW: "#6b7280",
   EX: "#6b7280",
-  Unknown: "#6b7280"
+  Unknown: "#6b7280",
 };
 
-const BirdPieChart: React.FC<BirdPieChartProps> = ({ data, chartFilters, groupByStatus = false }) => {
+const BirdPieChart: React.FC<BirdPieChartProps> = ({
+  data,
+  chartFilters,
+  groupByStatus = false,
+}) => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const chartData = useMemo(() => {
@@ -40,18 +44,17 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({ data, chartFilters, groupBy
       return items
         .map((item) => ({
           ...item,
-          color: statusColors[item.id] || statusColors.Unknown
+          color: statusColors[item.id] || statusColors.Unknown,
         }))
         .sort((a, b) => b.value - a.value);
     }
 
-    const birdData = getFilteredData(data as BirdRecord[], "", chartFilters);
-    return getTopSpecies(birdData);
+    const filteredData = getFilteredData(data as BirdRecord[], chartFilters);
+    return getTopSpecies(filteredData);
   }, [data, chartFilters, groupByStatus]);
 
   return (
     <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 flex flex-col md:flex-row gap-8">
-      {/* Pie Chart */}
       <div className="flex-1 h-[500px]">
         <ResponsivePie
           data={chartData}
@@ -76,7 +79,6 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({ data, chartFilters, groupBy
         />
       </div>
 
-      {/* Sidebar List */}
       <TopSpeciesList
         items={chartData}
         hoveredId={hoveredId}

@@ -8,23 +8,19 @@ interface ChartFilters {
 }
 
 const modelColors: Record<string, string> = {
-  birdNet: "#60a5fa",      // blue
-  customModel: "#f59e0b",  // amber
-  perch: "#10b981",        // green
+  birdNet: "#60a5fa",
+  customModel: "#f59e0b",
+  perch: "#10b981",
 };
 
 /**
- * Filter bird data based on search and chart filters, and keep only the highest model.
+ * Filter bird data for charts, selecting the max detection model per species.
  */
 export const getFilteredData = (
   data: BirdRecord[],
-  searchTerm: string,
   chartFilters: ChartFilters
 ) => {
   return data
-    .filter((b) =>
-      searchTerm ? b.species.toLowerCase().includes(searchTerm.toLowerCase()) : true
-    )
     .map((b) => {
       const modelValues = {
         birdNet: chartFilters.birdNet ? b.birdNet : 0,
@@ -47,7 +43,7 @@ export const getFilteredData = (
 };
 
 /**
- * Get top N species by total count.
+ * Get top N species for pie chart.
  */
 export const getTopSpecies = (data: BirdRecord[], top = 10) =>
   data
