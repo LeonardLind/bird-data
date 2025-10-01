@@ -9,6 +9,7 @@ interface FilterBarProps {
     val: { birdNet: boolean; customModel: boolean; perch: boolean }
   ) => void;
   groupByStatus: boolean;
+  showFamilyChart: boolean;
   selectedSheets: ("L1" | "L3" | "combined")[];
   toggleSheet: (sheet: "L1" | "L3" | "combined") => void;
   children?: React.ReactNode;
@@ -20,6 +21,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   chartFilters,
   setChartFilters,
   groupByStatus,
+  showFamilyChart,
   selectedSheets,
   toggleSheet,
   children,
@@ -35,10 +37,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
         className="p-2 rounded-lg w-full md:w-1/3 bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
 
-      {/* Model Filters + Status Sheets */}
+      {/* Filters row */}
       <div className="flex gap-6">
         {/* BirdNet / Custom / Perch (hide if groupByStatus or family active) */}
         {!groupByStatus &&
+          !showFamilyChart &&
           ["birdNet", "customModel", "perch"].map((model) => (
             <label
               key={model}
@@ -75,19 +78,22 @@ const FilterBar: React.FC<FilterBarProps> = ({
           ["L1", "L3", "combined"].map((sheet) => (
             <label
               key={sheet}
-              className="flex items-center gap-1 cursor-pointer text-blue-400"
+              className={`flex items-center gap-1 cursor-pointer ${
+                sheet === "combined" ? "text-yellow-400" : "text-blue-400"
+              }`}
             >
               <input
-                type="checkbox"
-                checked={selectedSheets.includes(sheet as "L1" | "L3" | "combined")}
-                onChange={() => toggleSheet(sheet as "L1" | "L3" | "combined")}
-              />
+  type="checkbox"
+  checked={selectedSheets.includes(sheet as "L1" | "L3" | "combined")}
+  onChange={() => toggleSheet(sheet as "L1" | "L3" | "combined")}
+/>
+
               {sheet.toUpperCase()}
             </label>
           ))}
       </div>
 
-      {/* Extra controls (Group by Status + Family Chart) */}
+      {/* Right side (toggles row) */}
       <div className="flex gap-6">{children}</div>
     </div>
   );

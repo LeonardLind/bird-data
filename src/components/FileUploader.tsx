@@ -22,7 +22,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected }) => {
   };
 
   return (
-    <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 mb-6">
+    <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-4">
       <label className="block mb-2 font-medium text-gray-400">
         Upload Bird Data (.xlsm)
       </label>

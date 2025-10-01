@@ -15,9 +15,13 @@ const Dashboard: React.FC = () => {
   const [statusRecords, setStatusRecords] = useState<StatusRecord[]>([]);
   const [familyRecords, setFamilyRecords] = useState<FamilyRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [chartFilters, setChartFilters] = useState({ birdNet: true, customModel: true, perch: true });
+  const [chartFilters, setChartFilters] = useState({
+    birdNet: true,
+    customModel: true,
+    perch: true,
+  });
   const [groupByStatus, setGroupByStatus] = useState(false);
-  const [selectedSheets, setSelectedSheets] = useState<("L1" | "L3" | "combined")[]>(["combined"]);
+  const [selectedSheets, setSelectedSheets] = useState<("L1" | "L3" | "combined")[]>([]);
   const [showFamilyChart, setShowFamilyChart] = useState(false);
 
   const handleFileUpload = async (file: File) => {
@@ -45,47 +49,65 @@ const Dashboard: React.FC = () => {
   );
 
   const dataForChart = useMemo(() => {
-    if (!groupByStatus || statusRecords.length === 0) return filteredData;
+  if (!groupByStatus || statusRecords.length === 0) return filteredData;
 
-    let filteredStatus: StatusRecord[];
-    if (selectedSheets.length === 0) {
-      filteredStatus = statusRecords;
-    } else {
-      filteredStatus = statusRecords.filter((r) =>
-        selectedSheets.includes(r.sheet as "L1" | "L3" | "combined")
-      );
-    }
+  let filteredStatus: StatusRecord[] = [];
+  if (selectedSheets.length === 0) {
+    filteredStatus = statusRecords;
+  } else if (selectedSheets.includes("combined")) {
+    // Combined = include both L1 + L3
+    filteredStatus = statusRecords.filter(
+      (r) => r.sheet === "L1" || r.sheet === "L3"
+    );
+  } else {
+    filteredStatus = statusRecords.filter((r) =>
+      selectedSheets.includes(r.sheet as "L1" | "L3" | "combined")
+    );
+  }
 
-    const statusTotals: Record<string, number> = {};
-    filteredStatus.forEach(({ status }) => {
-      statusTotals[status] = (statusTotals[status] || 0) + 1;
-    });
+  const statusTotals: Record<string, number> = {};
+  filteredStatus.forEach(({ status }) => {
+    statusTotals[status] = (statusTotals[status] || 0) + 1;
+  });
 
-    return Object.entries(statusTotals).map(([status, value]) => ({
-      id: status,
-      label: status,
-      value,
-      color: "#60a5fa",
-    }));
-  }, [filteredData, statusRecords, groupByStatus, selectedSheets]);
+  return Object.entries(statusTotals).map(([status, value]) => ({
+    id: status,
+    label: status,
+    value,
+    color: "#60a5fa",
+  }));
+}, [filteredData, statusRecords, groupByStatus, selectedSheets]);
+
 
   const totalSpecies = data.length;
   const detectedSpecies = data.filter((bird) => bird.max > 0).length;
 
+  // ✅ Updated toggle logic
   const toggleSheet = (sheet: "L1" | "L3" | "combined") => {
-    setSelectedSheets((prev) =>
-      prev.includes(sheet) ? prev.filter((s) => s !== sheet) : [...prev, sheet]
-    );
-  };
+  setSelectedSheets((prev) => {
+    if (sheet === "combined") {
+      // Toggle combined
+      return prev.includes("combined") ? [] : ["combined"];
+    } else {
+      if (prev.includes("combined")) {
+        // If combined was active, switch to the one clicked
+        return [sheet];
+      }
+      // Normal toggle: allow L1 or L3 exclusively
+      return prev.includes(sheet) ? [] : [sheet];
+    }
+  });
+};
+
 
   return (
     <div style={{ padding: 24, background: "#111827", minHeight: "100vh", color: "#fff" }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 24 }}>Bird Data Dashboard</h1>
-
       <FileUploader onFileSelected={handleFileUpload} />
 
       {data.length === 0 ? (
-        <p style={{ marginTop: 16, color: "#9ca3af" }}>Please upload a file to see insights.</p>
+        <p style={{ marginTop: 16, color: "#9ca3af" }}>
+          Please upload a file to see insights.
+        </p>
       ) : (
         <>
           {/* KPI Cards */}
@@ -103,34 +125,43 @@ const Dashboard: React.FC = () => {
 
           {/* Filter Bar */}
           <FilterBar
-  searchTerm={searchTerm}
-  setSearchTerm={setSearchTerm}
-  chartFilters={chartFilters}
-  setChartFilters={setChartFilters}
-  groupByStatus={groupByStatus}
-  selectedSheets={selectedSheets}
-  toggleSheet={toggleSheet}
->
-  {/* Group by Status */}
-  <label className="flex items-center gap-2 cursor-pointer">
-    <input
-      type="checkbox"
-      checked={groupByStatus}
-      onChange={(e) => setGroupByStatus(e.target.checked)}
-    />
-    Group by Conservation Status
-  </label>
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            chartFilters={chartFilters}
+            setChartFilters={setChartFilters}
+            groupByStatus={groupByStatus}
+            showFamilyChart={showFamilyChart}
+            selectedSheets={selectedSheets}
+            toggleSheet={toggleSheet}
+          >
+            {/* Group by Status */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={groupByStatus}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setGroupByStatus(checked);
+                  if (checked) setShowFamilyChart(false); // disable family if status is on
+                }}
+              />
+              Group by Conservation Status
+            </label>
 
-  {/* Show Family Chart */}
-  <label className="flex items-center gap-2 cursor-pointer">
-    <input
-      type="checkbox"
-      checked={showFamilyChart}
-      onChange={(e) => setShowFamilyChart(e.target.checked)}
-    />
-    Show Family Chart
-  </label>
-</FilterBar>
+            {/* Show Family Chart */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showFamilyChart}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setShowFamilyChart(checked);
+                  if (checked) setGroupByStatus(false); // disable status if family is on
+                }}
+              />
+              Show Family Chart
+            </label>
+          </FilterBar>
 
           {/* Chart Section */}
           {showFamilyChart ? (
