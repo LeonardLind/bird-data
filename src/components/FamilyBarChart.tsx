@@ -39,9 +39,9 @@ const FamilyBarChart: React.FC<FamilyBarChartProps> = ({ data, searchTerm = "" }
   }, [data, searchTerm]);
 
   return (
-    <div className=" p-4 rounded-2xl shadow-md mt-6">
+    <div className=" p-4 rounded-2xl shadow-lg mt-6 backdrop-blur-sm"> 
       <h3 className="text-lg font-bold mb-3">Species per Family</h3>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={436}>
         <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 50 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis

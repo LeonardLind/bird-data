@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
                   if (checked) setShowFamilyChart(false); // disable family if status is on
                 }}
               />
-              Group by Conservation Status
+              IUCN Status
             </label>
 
             {/* Show Family Chart */}
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
                   if (checked) setGroupByStatus(false); // disable status if family is on
                 }}
               />
-              Show Family Chart
+              Family Chart
             </label>
           </FilterBar>
 

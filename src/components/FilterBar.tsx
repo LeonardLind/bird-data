@@ -94,7 +94,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* Right side (toggles row) */}
-      <div className="flex gap-6">{children}</div>
+      <div className="flex gap-6 mr-30">{children}</div>
     </div>
   );
 };
