@@ -8,6 +8,7 @@ interface FilterBarProps {
   setChartFilters: (
     val: { birdNet: boolean; customModel: boolean; perch: boolean }
   ) => void;
+  children?: React.ReactNode; // 👈 allow extra controls
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -15,8 +16,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   setSearchTerm,
   chartFilters,
   setChartFilters,
+  children,
 }) => {
-
   return (
     <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 flex flex-col md:flex-row items-center gap-4 justify-between">
       {/* Search Bar */}
@@ -29,32 +30,40 @@ const FilterBar: React.FC<FilterBarProps> = ({
       />
 
       {/* Chart Filters */}
-      <div className="flex gap-6">
+      <div className="flex gap-6 items-center">
         {["birdNet", "customModel", "perch"].map((model) => (
-  <label
-    key={model}
-    className="flex items-center gap-1 cursor-pointer"
-    style={{ color: model === "birdNet" ? "#60a5fa" 
-                  : model === "customModel" ? "#f59e0b" 
-                  : "#10b981" }} // <- only change here
-  >
-    <input
-      type="checkbox"
-      checked={chartFilters[model as keyof typeof chartFilters]}
-      onChange={(e) =>
-        setChartFilters({
-          ...chartFilters,
-          [model]: e.target.checked,
-        })
-      }
-    />
-    {model === "birdNet"
-      ? "BirdNet"
-      : model === "customModel"
-      ? "Custom Model"
-      : "Perch"}
-  </label>
-))}
+          <label
+            key={model}
+            className="flex items-center gap-1 cursor-pointer"
+            style={{
+              color:
+                model === "birdNet"
+                  ? "#60a5fa"
+                  : model === "customModel"
+                  ? "#f59e0b"
+                  : "#10b981",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={chartFilters[model as keyof typeof chartFilters]}
+              onChange={(e) =>
+                setChartFilters({
+                  ...chartFilters,
+                  [model]: e.target.checked,
+                })
+              }
+            />
+            {model === "birdNet"
+              ? "BirdNet"
+              : model === "customModel"
+              ? "Custom Model"
+              : "Perch"}
+          </label>
+        ))}
+
+        {/* ✅ Extra controls passed from Dashboard */}
+        {children}
       </div>
     </div>
   );

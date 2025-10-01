@@ -79,25 +79,47 @@ const Dashboard: React.FC = () => {
       ) : (
         <>
           {/* KPI Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: 16,
+              marginBottom: 24,
+            }}
+          >
             <KPICard title="Total Species" value={totalSpecies} />
             <KPICard title="Detected Species" value={detectedSpecies} />
           </div>
 
-          {/* Filter Bar */}
+          {/* Filter Bar (now contains checkboxes too) */}
           <FilterBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             chartFilters={chartFilters}
             setChartFilters={setChartFilters}
-          />
+          >
+            {/* Group by Status */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={groupByStatus}
+                onChange={(e) => setGroupByStatus(e.target.checked)}
+              />
+              Group by Conservation Status
+            </label>
 
-          {/* Group by Status Checkbox */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, marginBottom: 8 }}>
-            <input type="checkbox" checked={groupByStatus} onChange={(e) => setGroupByStatus(e.target.checked)} id="groupByStatus" />
-            <label htmlFor="groupByStatus">Group by Conservation Status</label>
-          </div>
+            {/* Show Family Chart */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showFamilyChart}
+                onChange={(e) => setShowFamilyChart(e.target.checked)}
+              />
+              Show Family Chart
+            </label>
+          </FilterBar>
 
+          {/* Status sheet radios (stay below, only visible when grouping) */}
           {groupByStatus && (
             <div style={{ display: "flex", gap: 16, marginTop: 8, marginBottom: 16 }}>
               {["L1", "L3", "combined"].map((sheet) => (
@@ -115,17 +137,15 @@ const Dashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Family Chart Checkbox */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, marginBottom: 16 }}>
-            <input type="checkbox" checked={showFamilyChart} onChange={(e) => setShowFamilyChart(e.target.checked)} id="showFamilyChart" />
-            <label htmlFor="showFamilyChart">Show Family Chart</label>
-          </div>
-
           {/* Chart Section */}
           {showFamilyChart ? (
             <FamilyBarChart data={familyRecords} searchTerm={searchTerm} />
           ) : (
-            <BirdPieChart data={dataForChart} chartFilters={chartFilters} groupByStatus={groupByStatus} />
+            <BirdPieChart
+              data={dataForChart}
+              chartFilters={chartFilters}
+              groupByStatus={groupByStatus}
+            />
           )}
 
           {/* Result Count */}
