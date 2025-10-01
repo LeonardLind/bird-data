@@ -1,4 +1,3 @@
-// src/components/BirdPieChart.tsx
 import React, { useState, useMemo } from "react";
 import { ResponsivePie, type PieTooltipProps } from "@nivo/pie";
 import type { BirdRecord } from "../utils/parseExcel";
@@ -81,7 +80,7 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({
       />
     </div>
 
-    {/* Legend / Top Species */}
+    {/* Top Species */}
     <TopSpeciesList
       items={chartData}
       hoveredId={hoveredId}

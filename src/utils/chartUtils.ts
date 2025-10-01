@@ -1,4 +1,3 @@
-// src/utils/chartUtils.ts
 import type { BirdRecord } from "./parseExcel";
 
 interface ChartFilters {
@@ -13,9 +12,6 @@ const modelColors: Record<string, string> = {
   perch: "#10b981",
 };
 
-/**
- * Filter bird data for charts, selecting the max detection model per species.
- */
 export const getFilteredData = (
   data: BirdRecord[],
   chartFilters: ChartFilters
@@ -42,9 +38,6 @@ export const getFilteredData = (
     .filter((b) => b.total > 0);
 };
 
-/**
- * Get top N species for pie chart.
- */
 export const getTopSpecies = (data: BirdRecord[], top = 10) =>
   data
     .sort((a, b) => b.total - a.total)

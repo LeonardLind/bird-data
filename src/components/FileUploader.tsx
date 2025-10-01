@@ -1,8 +1,7 @@
-// src/components/FileUploader.tsx
 import React, { useState } from "react";
 
 interface FileUploaderProps {
-  onFileSelected: (file: File) => void; // <-- passes the raw File
+  onFileSelected: (file: File) => void; 
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected }) => {
@@ -14,7 +13,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected }) => {
 
     setError(null);
     try {
-      onFileSelected(file); // send the raw File to the dashboard
+      onFileSelected(file);
     } catch (err) {
       setError("Failed to handle the file.");
       console.error(err);

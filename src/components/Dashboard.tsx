@@ -1,4 +1,3 @@
-// src/components/Dashboard.tsx
 import React, { useState, useMemo } from "react";
 import type { BirdRecord } from "../utils/parseExcel";
 import { parseExcel } from "../utils/parseExcel";
@@ -26,8 +25,7 @@ const Dashboard: React.FC = () => {
   const [groupByStatus, setGroupByStatus] = useState(false);
   const [selectedSheets, setSelectedSheets] = useState<("L1" | "L3" | "combined")[]>([]);
   const [showFamilyChart, setShowFamilyChart] = useState(false);
-
-  // 👇 get t() function + language toggle
+  
   const { t, i18n } = useTranslation();
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "en" ? "pt-BR" : "en");

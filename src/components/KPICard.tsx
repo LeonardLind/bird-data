@@ -1,4 +1,3 @@
-// src/components/KPICard.tsx
 import React from "react";
 
 interface KPICardProps {

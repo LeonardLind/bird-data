@@ -1,4 +1,3 @@
-// src/components/FamilyBarChart.tsx
 import React, { useMemo } from "react";
 import {
   BarChart,
@@ -17,13 +16,12 @@ export interface FamilyRecord {
 
 interface FamilyBarChartProps {
   data: FamilyRecord[];
-  searchTerm?: string; // optional
+  searchTerm?: string; 
 }
 
 const FamilyBarChart: React.FC<FamilyBarChartProps> = ({ data, searchTerm = "" }) => {
   const { t } = useTranslation();
 
-  // Group and count species per family
   const chartData = useMemo(() => {
     const counts: Record<string, number> = {};
 

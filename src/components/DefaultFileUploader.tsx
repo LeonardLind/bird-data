@@ -1,4 +1,3 @@
-// src/components/DefaultFileUploader.tsx
 import React from "react";
 import FileUploader from "./FileUploader";
 import { useTranslation } from "react-i18next";
@@ -9,8 +8,6 @@ interface EmptyStateProps {
 
 const DefaultFileUploader: React.FC<EmptyStateProps> = ({ onFileSelected }) => {
   const { t, i18n } = useTranslation();
-
-  // Function to toggle language
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === "en" ? "pt-BR" : "en");
   };

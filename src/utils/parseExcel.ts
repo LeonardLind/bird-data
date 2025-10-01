@@ -1,4 +1,3 @@
-// src/utils/parseExcel.ts
 import * as XLSX from "xlsx";
 
 export interface BirdRecord {
@@ -8,12 +7,9 @@ export interface BirdRecord {
   customModel: number;
   perch: number;
   max: number;
-  status: string; // LC, NT, VU, EN, CR, etc.
+  status: string; 
 }
 
-/**
- * Parses the uploaded Excel file and returns a clean array of BirdRecord objects.
- */
 export const parseExcel = async (file: File): Promise<BirdRecord[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -30,7 +26,6 @@ export const parseExcel = async (file: File): Promise<BirdRecord[]> => {
 
         console.log("Excel headers:", Object.keys(jsonData[0]));
 
-        // Normalize headers (trim and lowercase)
         const headerMap: Record<string, string> = {};
         Object.keys(jsonData[0]).forEach((key) => {
           headerMap[key.trim().toLowerCase()] = key;

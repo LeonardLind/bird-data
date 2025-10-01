@@ -1,4 +1,3 @@
-// src/utils/parseFamily.ts
 import * as XLSX from "xlsx";
 
 export interface FamilyRecord {
@@ -14,15 +13,13 @@ export const parseFamily = async (file: File): Promise<FamilyRecord[]> => {
         const data = new Uint8Array(e.target?.result as ArrayBuffer);
         const workbook = XLSX.read(data, { type: "array" });
 
-        const sheet = workbook.Sheets["L1"]; // <-- changed from L3 to L1
+        const sheet = workbook.Sheets["L1"]; 
         if (!sheet) throw new Error("Sheet 'L1' not found!");
 
-        // Convert sheet to 2D array
         const raw: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
-        if (raw.length < 2) return resolve([]); // no data
+        if (raw.length < 2) return resolve([]); 
 
-        // Use the first row as headers
         const headers: string[] = raw[0].map((h: any) => h.toString().trim().toLowerCase());
         const familyColIndex = headers.findIndex((h) => h === "family");
 

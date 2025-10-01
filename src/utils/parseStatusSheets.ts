@@ -1,9 +1,8 @@
-// src/utils/parseStatusSheets.ts
 import * as XLSX from "xlsx";
 
 export interface StatusRecord {
   species: string;
-  status: string; // LC, NT, VU, EN, CR, etc.
+  status: string; 
   sheet: "L1" | "L3";
 }
 
