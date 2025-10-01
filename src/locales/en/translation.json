@@ -1,0 +1,34 @@
+{
+  "totalSpecies": "Total Species",
+  "detectedSpecies": "Detected Species",
+  "iucnStatus": "IUCN Status",
+  "familyChart": "Family Chart",
+  "showingSpecies": "Showing {{count}} of {{total}} species",
+  "uploadPrompt": "Please upload the Bird Data (.xlsm) file to see insights.",
+  "searchSpecies": "Search species...",
+  "birdNet": "BirdNet",
+  "customModel": "Custom Model",
+  "perch": "Perch",
+  "combined": "Combined",
+  "topSpecies": "Top Species",
+  "conservationStatus": "Conservation Status",
+  "status": {
+    "NE": "Not Evaluated",
+    "DD": "Data Deficient",
+    "LC": "Least Concern",
+    "NT": "Near Threatened",
+    "VU": "Vulnerable",
+    "EN": "Endangered",
+    "CR": "Critically Endangered",
+    "EW": "Extinct in the Wild",
+    "EX": "Extinct",
+    "unknown": "Unknown"
+  },
+  "familyChartTitle": "Species per Family",
+  "tooltip": {
+    "countLabel": "Count",
+    "species": "{{count}} species"
+  },
+  "unknown": "Unknown",
+  "translatePortuguese": "Translate to Portuguese"
+}

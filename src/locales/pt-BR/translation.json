@@ -1,0 +1,35 @@
+{
+  "totalSpecies": "Espécies Totais",
+  "detectedSpecies": "Espécies Detectadas",
+  "iucnStatus": "Status da IUCN",
+  "familyChart": "Gráfico de Família",
+  "showingSpecies": "Mostrando {{count}} de {{total}} espécies",
+  "uploadPrompt": "Por favor, faça o upload do arquivo de Dados das Aves (.xlsm) para ver os insights.",
+  "searchSpecies": "Pesquisar espécies...",
+  "birdNet": "BirdNet",
+  "customModel": "Modelo Personalizado",
+  "perch": "Poleiro",
+  "combined": "Combinado",
+  "topSpecies": "Principais Espécies",
+  "conservationStatus": "Status de Conservação",
+  "status": {
+    "NE": "Não Avaliado",
+    "DD": "Dados Insuficientes",
+    "LC": "Pouco Preocupante",
+    "NT": "Quase Ameaçado",
+    "VU": "Vulnerável",
+    "EN": "Em Perigo",
+    "CR": "Criticamente Ameaçado",
+    "EW": "Extinto na Natureza",
+    "EX": "Extinto",
+    "unknown": "Desconhecido"
+  },
+  "familyChartTitle": "Espécies por Família",
+  "tooltip": {
+    "countLabel": "Quantidade",
+    "species": "{{count}} espécies"
+  },
+  "unknown": "Desconhecido",
+  "translateEnglish": "Traduzir para Inglês",
+  "translatePortuguese": "Traduzir para Português"
+}

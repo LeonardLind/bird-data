@@ -54,7 +54,7 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({
   }, [data, chartFilters, groupByStatus]);
 
   return (
-  <div className="bg-[#141b2d] border border-gray-700 rounded-2xl shadow-xl p-6 flex flex-col md:flex-row gap-8">
+  <div className="bg-[#141b2d] border border-gray-700 rounded-2xl shadow-xl p-5 flex flex-col md:flex-row gap-8">
     {/* Pie Chart */}
     <div className="flex-1 h-[480px]">
       <ResponsivePie

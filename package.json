@@ -13,8 +13,10 @@
     "@nivo/bar": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@tailwindcss/vite": "^4.1.13",
+    "i18next": "^25.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-i18next": "^16.0.0",
     "recharts": "^3.2.1",
     "tailwindcss": "^4.1.13",
     "xlsx": "^0.18.5"
