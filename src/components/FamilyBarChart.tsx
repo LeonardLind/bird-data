@@ -39,33 +39,47 @@ const FamilyBarChart: React.FC<FamilyBarChartProps> = ({ data, searchTerm = "" }
   }, [data, searchTerm]);
 
   return (
-    <div className=" p-4 rounded-2xl shadow-lg mt-6 backdrop-blur-sm"> 
-      <h3 className="text-lg font-bold mb-3">Species per Family</h3>
-      <ResponsiveContainer width="100%" height={436}>
-        <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 50 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis
-            dataKey="family"
-            angle={-40}
-            textAnchor="end"
-            interval={0}
-            tick={{ fill: "#ddd", fontSize: 12 }}
-          />
-          <YAxis tick={{ fill: "#ddd" }} />
-          <Tooltip
-            contentStyle={{ backgroundColor: "#1f2937", border: "none", color: "#fff" }}
-            formatter={(value: number) => [`${value} species`, "Count"]}
-          />
-          <Bar
-            dataKey="value"
-            fill="#60a5fa"
-            radius={[6, 6, 0, 0]} // rounded top
-            barSize={40} // thicker bars
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
+  <div className="bg-[#141b2d] border border-gray-700 rounded-2xl shadow-xl p-6 mt-6">
+    <h3 className="text-xl font-semibold mb-4 text-indigo-300 tracking-wide">
+      Species per Family
+    </h3>
+    <ResponsiveContainer width="100%" height={436}>
+      <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 50 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" />
+        <XAxis
+          dataKey="family"
+          angle={-40}
+          textAnchor="end"
+          interval={0}
+          tick={{ fill: "#cbd5e1", fontSize: 12 }}
+        />
+        <YAxis tick={{ fill: "#cbd5e1", fontSize: 12 }} />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "#1e293b",
+            border: "1px solid #334155",
+            borderRadius: "8px",
+            color: "#f8fafc",
+          }}
+          formatter={(value: number) => [`${value} species`, "Count"]}
+        />
+        <Bar
+          dataKey="value"
+          fill="url(#barGradient)"
+          radius={[8, 8, 0, 0]}
+          barSize={36}
+        />
+        <defs>
+          <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#60a5fa" stopOpacity={0.9} />
+            <stop offset="100%" stopColor="#2563eb" stopOpacity={0.6} />
+          </linearGradient>
+        </defs>
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
+
 };
 
 export default FamilyBarChart;

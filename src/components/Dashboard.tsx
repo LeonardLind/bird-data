@@ -9,6 +9,7 @@ import KPICard from "./KPICard";
 import BirdPieChart from "./BirdPieChart";
 import FamilyBarChart from "./FamilyBarChart";
 import FilterBar from "./FilterBar";
+import DefaultFileUploader from "./DefaultFileuploader";
 
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<BirdRecord[]>([]);
@@ -55,7 +56,6 @@ const Dashboard: React.FC = () => {
   if (selectedSheets.length === 0) {
     filteredStatus = statusRecords;
   } else if (selectedSheets.includes("combined")) {
-    // Combined = include both L1 + L3
     filteredStatus = statusRecords.filter(
       (r) => r.sheet === "L1" || r.sheet === "L3"
     );
@@ -82,18 +82,15 @@ const Dashboard: React.FC = () => {
   const totalSpecies = data.length;
   const detectedSpecies = data.filter((bird) => bird.max > 0).length;
 
-  // ✅ Updated toggle logic
+  // Toggle logic
   const toggleSheet = (sheet: "L1" | "L3" | "combined") => {
   setSelectedSheets((prev) => {
     if (sheet === "combined") {
-      // Toggle combined
       return prev.includes("combined") ? [] : ["combined"];
     } else {
       if (prev.includes("combined")) {
-        // If combined was active, switch to the one clicked
         return [sheet];
       }
-      // Normal toggle: allow L1 or L3 exclusively
       return prev.includes(sheet) ? [] : [sheet];
     }
   });
@@ -101,87 +98,89 @@ const Dashboard: React.FC = () => {
 
 
   return (
-    <div style={{ padding: 24, background: "#111827", minHeight: "100vh", color: "#fff" }}>
-      <FileUploader onFileSelected={handleFileUpload} />
-
+  <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white p-8">
+    <div className="max-w-[95rem] mx-auto space-y-5">
       {data.length === 0 ? (
-        <p style={{ marginTop: 16, color: "#9ca3af" }}>
-          Please upload a file to see insights.
-        </p>
-      ) : (
+  <div className="flex flex-col items-center gap-6">
+    <DefaultFileUploader onFileSelected={handleFileUpload} />
+  </div>
+) : (
         <>
-          {/* KPI Cards */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: 16,
-              marginBottom: 24,
-            }}
-          >
-            <KPICard title="Total Species" value={totalSpecies} />
-            <KPICard title="Detected Species" value={detectedSpecies} />
+          {/* KPI Cards + FileUploader */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-[#141b2d] p-6 rounded-2xl border border-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.25)]">
+              <KPICard title="Total Species" value={totalSpecies} />
+            </div>
+            <div className="bg-[#141b2d] p-6 rounded-2xl border border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+              <KPICard title="Detected Species" value={detectedSpecies} />
+            </div>
+            <div className="bg-[#141b2d] p-6 rounded-2xl border border-orange-400/40 shadow-[0_0_20px_rgba(56,189,248,0.25)] flex items-center justify-center">
+              <FileUploader onFileSelected={handleFileUpload} />
+            </div>
           </div>
 
           {/* Filter Bar */}
-          <FilterBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            chartFilters={chartFilters}
-            setChartFilters={setChartFilters}
-            groupByStatus={groupByStatus}
-            showFamilyChart={showFamilyChart}
-            selectedSheets={selectedSheets}
-            toggleSheet={toggleSheet}
-          >
-            {/* Group by Status */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={groupByStatus}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setGroupByStatus(checked);
-                  if (checked) setShowFamilyChart(false); // disable family if status is on
-                }}
-              />
-              IUCN Status
-            </label>
-
-            {/* Show Family Chart */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showFamilyChart}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  setShowFamilyChart(checked);
-                  if (checked) setGroupByStatus(false); // disable status if family is on
-                }}
-              />
-              Family Chart
-            </label>
-          </FilterBar>
+          <div>
+            <FilterBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              chartFilters={chartFilters}
+              setChartFilters={setChartFilters}
+              groupByStatus={groupByStatus}
+              showFamilyChart={showFamilyChart}
+              selectedSheets={selectedSheets}
+              toggleSheet={toggleSheet}
+            >
+              <label className="flex items-center gap-2 text-indigo-400 font-medium">
+                <input
+                  type="checkbox"
+                  checked={groupByStatus}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setGroupByStatus(checked);
+                    if (checked) setShowFamilyChart(false);
+                  }}
+                />
+                IUCN Status
+              </label>
+              <label className="flex items-center gap-2 text-emerald-400 font-medium">
+                <input
+                  type="checkbox"
+                  checked={showFamilyChart}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setShowFamilyChart(checked);
+                    if (checked) setGroupByStatus(false);
+                  }}
+                />
+                Family Chart
+              </label>
+            </FilterBar>
+          </div>
 
           {/* Chart Section */}
-          {showFamilyChart ? (
-            <FamilyBarChart data={familyRecords} searchTerm={searchTerm} />
-          ) : (
-            <BirdPieChart
-              data={dataForChart}
-              chartFilters={chartFilters}
-              groupByStatus={groupByStatus}
-            />
-          )}
+          <div>
+            {showFamilyChart ? (
+              <FamilyBarChart data={familyRecords} searchTerm={searchTerm} />
+            ) : (
+              <BirdPieChart
+                data={dataForChart}
+                chartFilters={chartFilters}
+                groupByStatus={groupByStatus}
+              />
+            )}
+          </div>
 
           {/* Result Count */}
-          <p style={{ color: "#9ca3af", marginTop: 16 }}>
+          <p className="text-gray-400 text-sm text-center">
             Showing {filteredData.length} of {totalSpecies} species
           </p>
         </>
       )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Dashboard;

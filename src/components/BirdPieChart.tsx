@@ -54,39 +54,43 @@ const BirdPieChart: React.FC<BirdPieChartProps> = ({
   }, [data, chartFilters, groupByStatus]);
 
   return (
-    <div className="bg-gray-850/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 flex flex-col md:flex-row gap-8">
-      <div className="flex-1 h-[500px]">
-        <ResponsivePie
-          data={chartData}
-          margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-          innerRadius={0.6}
-          padAngle={1}
-          cornerRadius={5}
-          colors={(d) => (d.data as any).color}
-          activeOuterRadiusOffset={hoveredId ? 15 : 0}
-          arcLabelsSkipAngle={10}
-          arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
-          arcLinkLabelsSkipAngle={10}
-          arcLinkLabelsTextColor="#fff"
-          arcLinkLabelsColor={{ from: "color" }}
-          tooltip={({ datum }: PieTooltipProps<any>) => (
-            <div className="bg-gray-900 text-gray-100 p-2 rounded shadow">
-              <strong>{datum.id}</strong>: {datum.value.toLocaleString()}
-            </div>
-          )}
-          onMouseEnter={(d) => setHoveredId(String(d.id))}
-          onMouseLeave={() => setHoveredId(null)}
-        />
-      </div>
-
-      <TopSpeciesList
-        items={chartData}
-        hoveredId={hoveredId}
-        setHoveredId={setHoveredId}
-        groupByStatus={groupByStatus}
+  <div className="bg-[#141b2d] border border-gray-700 rounded-2xl shadow-xl p-6 flex flex-col md:flex-row gap-8">
+    {/* Pie Chart */}
+    <div className="flex-1 h-[480px]">
+      <ResponsivePie
+        data={chartData}
+        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+        innerRadius={0.55}
+        padAngle={1.5}
+        cornerRadius={6}
+        enableArcLinkLabels={true}
+        activeOuterRadiusOffset={hoveredId ? 12 : 0}
+        colors={(d) => (d.data as any).color}
+        arcLabelsSkipAngle={12}
+        arcLabelsTextColor="#e5e7eb"
+        arcLinkLabelsSkipAngle={10}
+        arcLinkLabelsTextColor="#e5e7eb"
+        arcLinkLabelsColor={{ from: "color" }}
+        tooltip={({ datum }: PieTooltipProps<any>) => (
+          <div className="bg-gray-900/90 border border-gray-700 text-gray-100 px-3 py-2 rounded-lg shadow-md">
+            <strong>{datum.id}</strong>: {datum.value.toLocaleString()}
+          </div>
+        )}
+        onMouseEnter={(d) => setHoveredId(String(d.id))}
+        onMouseLeave={() => setHoveredId(null)}
       />
     </div>
-  );
+
+    {/* Legend / Top Species */}
+    <TopSpeciesList
+      items={chartData}
+      hoveredId={hoveredId}
+      setHoveredId={setHoveredId}
+      groupByStatus={groupByStatus}
+    />
+  </div>
+);
+
 };
 
 export default BirdPieChart;
