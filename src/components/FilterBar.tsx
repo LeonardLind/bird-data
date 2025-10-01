@@ -8,7 +8,10 @@ interface FilterBarProps {
   setChartFilters: (
     val: { birdNet: boolean; customModel: boolean; perch: boolean }
   ) => void;
-  children?: React.ReactNode; // 👈 allow extra controls
+  groupByStatus: boolean;
+  selectedSheets: ("L1" | "L3" | "combined")[];
+  toggleSheet: (sheet: "L1" | "L3" | "combined") => void;
+  children?: React.ReactNode;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -16,6 +19,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
   setSearchTerm,
   chartFilters,
   setChartFilters,
+  groupByStatus,
+  selectedSheets,
+  toggleSheet,
   children,
 }) => {
   return (
@@ -29,42 +35,60 @@ const FilterBar: React.FC<FilterBarProps> = ({
         className="p-2 rounded-lg w-full md:w-1/3 bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
 
-      {/* Chart Filters */}
-      <div className="flex gap-6 items-center">
-        {["birdNet", "customModel", "perch"].map((model) => (
-          <label
-            key={model}
-            className="flex items-center gap-1 cursor-pointer"
-            style={{
-              color:
-                model === "birdNet"
-                  ? "#60a5fa"
-                  : model === "customModel"
-                  ? "#f59e0b"
-                  : "#10b981",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={chartFilters[model as keyof typeof chartFilters]}
-              onChange={(e) =>
-                setChartFilters({
-                  ...chartFilters,
-                  [model]: e.target.checked,
-                })
-              }
-            />
-            {model === "birdNet"
-              ? "BirdNet"
-              : model === "customModel"
-              ? "Custom Model"
-              : "Perch"}
-          </label>
-        ))}
+      {/* Model Filters + Status Sheets */}
+      <div className="flex gap-6">
+        {/* BirdNet / Custom / Perch (hide if groupByStatus or family active) */}
+        {!groupByStatus &&
+          ["birdNet", "customModel", "perch"].map((model) => (
+            <label
+              key={model}
+              className="flex items-center gap-1 cursor-pointer"
+              style={{
+                color:
+                  model === "birdNet"
+                    ? "#60a5fa"
+                    : model === "customModel"
+                    ? "#f59e0b"
+                    : "#10b981",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={chartFilters[model as keyof typeof chartFilters]}
+                onChange={(e) =>
+                  setChartFilters({
+                    ...chartFilters,
+                    [model]: e.target.checked,
+                  })
+                }
+              />
+              {model === "birdNet"
+                ? "BirdNet"
+                : model === "customModel"
+                ? "Custom Model"
+                : "Perch"}
+            </label>
+          ))}
 
-        {/* ✅ Extra controls passed from Dashboard */}
-        {children}
+        {/* L1 / L3 / Combined checkboxes (only if groupByStatus is on) */}
+        {groupByStatus &&
+          ["L1", "L3", "combined"].map((sheet) => (
+            <label
+              key={sheet}
+              className="flex items-center gap-1 cursor-pointer text-blue-400"
+            >
+              <input
+                type="checkbox"
+                checked={selectedSheets.includes(sheet as "L1" | "L3" | "combined")}
+                onChange={() => toggleSheet(sheet as "L1" | "L3" | "combined")}
+              />
+              {sheet.toUpperCase()}
+            </label>
+          ))}
       </div>
+
+      {/* Extra controls (Group by Status + Family Chart) */}
+      <div className="flex gap-6">{children}</div>
     </div>
   );
 };

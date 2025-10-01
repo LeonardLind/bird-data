@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chartFilters, setChartFilters] = useState({ birdNet: true, customModel: true, perch: true });
   const [groupByStatus, setGroupByStatus] = useState(false);
-  const [statusSheet, setStatusSheet] = useState<"L1" | "L3" | "combined">("combined");
+  const [selectedSheets, setSelectedSheets] = useState<("L1" | "L3" | "combined")[]>(["combined"]);
   const [showFamilyChart, setShowFamilyChart] = useState(false);
 
   const handleFileUpload = async (file: File) => {
@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
       setStatusRecords(statuses);
 
       const families = await parseFamily(file);
-      console.log("Parsed families:", families); // debug
+      console.log("Parsed families:", families);
       setFamilyRecords(families);
     } catch (err) {
       console.error("Failed to parse file:", err);
@@ -48,9 +48,13 @@ const Dashboard: React.FC = () => {
     if (!groupByStatus || statusRecords.length === 0) return filteredData;
 
     let filteredStatus: StatusRecord[];
-    if (statusSheet === "L1") filteredStatus = statusRecords.filter((r) => r.sheet === "L1");
-    else if (statusSheet === "L3") filteredStatus = statusRecords.filter((r) => r.sheet === "L3");
-    else filteredStatus = statusRecords;
+    if (selectedSheets.length === 0) {
+      filteredStatus = statusRecords;
+    } else {
+      filteredStatus = statusRecords.filter((r) =>
+        selectedSheets.includes(r.sheet as "L1" | "L3" | "combined")
+      );
+    }
 
     const statusTotals: Record<string, number> = {};
     filteredStatus.forEach(({ status }) => {
@@ -63,10 +67,16 @@ const Dashboard: React.FC = () => {
       value,
       color: "#60a5fa",
     }));
-  }, [filteredData, statusRecords, groupByStatus, statusSheet]);
+  }, [filteredData, statusRecords, groupByStatus, selectedSheets]);
 
   const totalSpecies = data.length;
   const detectedSpecies = data.filter((bird) => bird.max > 0).length;
+
+  const toggleSheet = (sheet: "L1" | "L3" | "combined") => {
+    setSelectedSheets((prev) =>
+      prev.includes(sheet) ? prev.filter((s) => s !== sheet) : [...prev, sheet]
+    );
+  };
 
   return (
     <div style={{ padding: 24, background: "#111827", minHeight: "100vh", color: "#fff" }}>
@@ -91,51 +101,36 @@ const Dashboard: React.FC = () => {
             <KPICard title="Detected Species" value={detectedSpecies} />
           </div>
 
-          {/* Filter Bar (now contains checkboxes too) */}
+          {/* Filter Bar */}
           <FilterBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            chartFilters={chartFilters}
-            setChartFilters={setChartFilters}
-          >
-            {/* Group by Status */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={groupByStatus}
-                onChange={(e) => setGroupByStatus(e.target.checked)}
-              />
-              Group by Conservation Status
-            </label>
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+  chartFilters={chartFilters}
+  setChartFilters={setChartFilters}
+  groupByStatus={groupByStatus}
+  selectedSheets={selectedSheets}
+  toggleSheet={toggleSheet}
+>
+  {/* Group by Status */}
+  <label className="flex items-center gap-2 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={groupByStatus}
+      onChange={(e) => setGroupByStatus(e.target.checked)}
+    />
+    Group by Conservation Status
+  </label>
 
-            {/* Show Family Chart */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showFamilyChart}
-                onChange={(e) => setShowFamilyChart(e.target.checked)}
-              />
-              Show Family Chart
-            </label>
-          </FilterBar>
-
-          {/* Status sheet radios (stay below, only visible when grouping) */}
-          {groupByStatus && (
-            <div style={{ display: "flex", gap: 16, marginTop: 8, marginBottom: 16 }}>
-              {["L1", "L3", "combined"].map((sheet) => (
-                <label key={sheet} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <input
-                    type="radio"
-                    name="statusSheet"
-                    value={sheet}
-                    checked={statusSheet === sheet}
-                    onChange={() => setStatusSheet(sheet as "L1" | "L3" | "combined")}
-                  />
-                  {sheet.toUpperCase()}
-                </label>
-              ))}
-            </div>
-          )}
+  {/* Show Family Chart */}
+  <label className="flex items-center gap-2 cursor-pointer">
+    <input
+      type="checkbox"
+      checked={showFamilyChart}
+      onChange={(e) => setShowFamilyChart(e.target.checked)}
+    />
+    Show Family Chart
+  </label>
+</FilterBar>
 
           {/* Chart Section */}
           {showFamilyChart ? (
